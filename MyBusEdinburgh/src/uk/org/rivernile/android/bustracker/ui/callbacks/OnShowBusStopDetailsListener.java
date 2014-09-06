@@ -23,39 +23,23 @@
  *     exempt from clause 2.
  */
 
-package uk.org.rivernile.edinburghbustracker.android;
+package uk.org.rivernile.android.bustracker.ui.callbacks;
 
-import uk.org.rivernile.android.bustracker.FragmentFactory;
-import uk.org.rivernile.android.bustracker.ui.bustimes
-        .DisplayStopDataFragment;
-import uk.org.rivernile.android.bustracker.ui.journeytimes.JourneyTimesFragment;
-import uk.org.rivernile.edinburghbustracker.android.ui.bustimes
-        .EdinburghDisplayStopDataFragment;
+import android.app.Activity;
+import android.support.v4.app.Fragment;
 
 /**
- * The EdinburghFragmentFactory returns the correct {@link Fragment}s for the
- * Edinburgh-specific application.
+ * This listener is used to send callbacks from {@link Fragment}s to
+ * {@link Activity Activities} when the user wishes to see bus stop details.
  * 
  * @author Niall Scott
  */
-public final class EdinburghFragmentFactory implements FragmentFactory {
+public interface OnShowBusStopDetailsListener {
     
     /**
-     * This constructor exists to prevent instantiation outside this package.
+     * This is called when the user wants to see details about a bus stop.
+     * 
+     * @param stopCode The bus stop code the user wants to see details for.
      */
-    EdinburghFragmentFactory() {
-        super();
-    }
-
-    @Override
-    public DisplayStopDataFragment getDisplayStopDataFragment(
-            final String stopCode) {
-        return EdinburghDisplayStopDataFragment.newInstance(stopCode);
-    }
-
-    @Override
-    public JourneyTimesFragment getJourneyTimesFragment(final String stopCode,
-            final String journeyId) {
-        return JourneyTimesFragment.newInstance(stopCode, journeyId);
-    }
+    public void onShowBusStopDetails(String stopCode);
 }

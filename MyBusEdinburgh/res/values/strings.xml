@@ -165,6 +165,13 @@ This version of strings.xml is in the developer's locale (en_GB) -->
     
     <!--
     ************************************
+    * Strings for JourneyTimesActivity *
+    ************************************
+    -->
+    <string name="journeytimes_title">Journey times</string>
+    
+    <!--
+    ************************************
     * Strings for NearestStopsActivity *
     ************************************
     -->
@@ -379,8 +386,8 @@ This version of strings.xml is in the developer's locale (en_GB) -->
     <string name="displaystopdata_err_unknown"><b>An unknown error has occurred.</b>\nPlease try again later.</string>
     <string name="displaystopdata_err_nocode"><b>No stop code was provided.</b>\nTo be able to show bus times, a stop code needs to be provided.</string>
     <string name="displaystopdata_err_parseerr"><b>There was an error whilst trying to handle the incoming data.</b>\nPlease retry.</string>
-    <string name="displaystopdata_err_noconn"><b>A connection could not be made to the server or an error occurred during transmission.</b>\nIf you are sure you are connected, please retry.</string>
-    <string name="displaystopdata_err_noresolv"><b>The server could not be resolved.</b>\nPlease try again later.</string>
+    <string name="displaystopdata_err_noconn"><b>An internet connection is not available.</b>\nConnect and then try again.</string>
+    <string name="displaystopdata_err_noresolv"><b>Could not contact the server.</b>\nPlease check your connection.</string>
     <string name="displaystopdata_err_nodata"><b>No scheduled departures.</b>\nEither the stop code is incorrect, or there are no departures in the near future.</string>
     <string name="displaystopdata_err_urlmismatch"><b>Network sign on required.</b>\nPlease sign on through your web browser and try again.</string>
     
@@ -410,6 +417,25 @@ This version of strings.xml is in the developer's locale (en_GB) -->
     <string name="favouritestops_nosavedstops"><b>You have no saved favourite bus stops.</b>\nYou can add a new favourite from various places in the application, such as from the bus stop map or from the nearest stops list. If you have a backup of your favourite stops, you can restore them from Settings.</string>
     <string name="favouriteshortcut_title">Select favourite stop</string>
     <string name="favouriteshortcut_label">Favourite bus stop</string>
+    
+    <!--
+    ************************************
+    * Strings for JourneyTimesFragment *
+    ************************************
+    -->
+    <string name="journeytimes_err_unknown">@string/displaystopdata_err_unknown</string>
+    <string name="journeytimes_err_nocode"><b>No bus stop code was provided</b></string>
+    <string name="journeytimes_err_nojourneyid"><b>No journey ID was provided</b></string>
+    <string name="journeytimes_err_parseerr">@string/displaystopdata_err_parseerr</string>
+    <string name="journeytimes_err_noconn">@string/displaystopdata_err_noconn</string>
+    <string name="journeytimes_err_noresolv">@string/displaystopdata_err_noresolv</string>
+    <string name="journeytimes_err_nodata"><b>No scheduled departures.</b>Either this bus can not be tracked, or it has finished its route.</string>
+    <string name="journeytimes_err_urlmismatch">@string/displaystopdata_err_urlmismatch</string>
+    
+    <string name="journeytimes_err_api_invalid_key">@string/displaystopdata_err_api_invalid_key</string>
+    <string name="journeytimes_err_api_processing_error">@string/displaystopdata_err_api_processing_error</string>
+    <string name="journeytimes_err_api_system_maintenance">@string/displaystopdata_err_api_system_maintenance</string>
+    <string name="journeytimes_err_api_system_overloaded">@string/displaystopdata_err_api_system_overloaded</string>
     
     <!--
     *************************************
@@ -629,6 +655,13 @@ This version of strings.xml is in the developer's locale (en_GB) -->
     <string name="favouritestops_menu_prox_rem">@string/prox_alert_rem</string>
     <string name="favouritestops_menu_time_add">@string/time_alert_add</string>
     <string name="favouritestops_menu_time_rem">@string/time_alert_rem</string>
+    
+    <!--
+    *****************************************
+    * Strings for JourneyTimesFragment menu *
+    *****************************************
+    -->
+    <string name="journeytimes_menu_refresh">@string/displaystopdata_menu_refresh</string>
     
     <!--
     *********************************

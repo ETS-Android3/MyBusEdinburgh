@@ -44,7 +44,8 @@ import uk.org.rivernile.edinburghbustracker.android.utils.EdinburghUrlBuilder;
 
 /**
  * This class is the main entry point to the My Bus Edinburgh application. Some
- * app resources, such as the BusStopDatabase, can be retrieved from here.
+ * app resources, such as the {@link BusStopDatabase}, can be retrieved from
+ * here.
  * 
  * @author Niall Scott
  */
@@ -58,9 +59,6 @@ public class MyBusEdinburghApplication extends BusApplication {
     private SettingsDatabase settingsDatabase;
     private FragmentFactory fragmentFactory;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCreate() {
         super.onCreate();
@@ -68,48 +66,36 @@ public class MyBusEdinburghApplication extends BusApplication {
         new Thread(cleanupTasks).start();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized BusTrackerEndpoint getBusTrackerEndpoint() {
         if (busTrackerEndpoint == null) {
-            busTrackerEndpoint = new HttpBusTrackerEndpoint(
+            busTrackerEndpoint = new HttpBusTrackerEndpoint(this,
                     new EdinburghParser(), getUrlBuilder());
         }
         
         return busTrackerEndpoint;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized DatabaseEndpoint getDatabaseEndpoint() {
         if (databaseEndpoint == null) {
-            databaseEndpoint = new HttpDatabaseEndpoint(
+            databaseEndpoint = new HttpDatabaseEndpoint(this,
                     new EdinburghDatabaseVersionParser(), getUrlBuilder());
         }
         
         return databaseEndpoint;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized TwitterEndpoint getTwitterEndpoint() {
         if (twitterEndpoint == null) {
-            twitterEndpoint = new HttpTwitterEndpoint(
+            twitterEndpoint = new HttpTwitterEndpoint(this,
                     new TwitterParserImpl(), getUrlBuilder());
         }
         
         return twitterEndpoint;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized BusStopDatabase getBusStopDatabase() {
         if (busStopDatabase == null) {
@@ -119,9 +105,6 @@ public class MyBusEdinburghApplication extends BusApplication {
         return busStopDatabase;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public synchronized SettingsDatabase getSettingsDatabase() {
         if (settingsDatabase == null) {
@@ -131,9 +114,6 @@ public class MyBusEdinburghApplication extends BusApplication {
         return settingsDatabase;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FragmentFactory getFragmentFactory() {
         if (fragmentFactory == null) {
@@ -144,9 +124,9 @@ public class MyBusEdinburghApplication extends BusApplication {
     }
     
     /**
-     * Get an instance of the UrlBuilder.
+     * Get an instance of the {@link UrlBuilder}.
      * 
-     * @return An instance of the UrlBuilder.
+     * @return An instance of the {@link UrlBuilder}.
      */
     private UrlBuilder getUrlBuilder() {
         if (urlBuilder == null) {

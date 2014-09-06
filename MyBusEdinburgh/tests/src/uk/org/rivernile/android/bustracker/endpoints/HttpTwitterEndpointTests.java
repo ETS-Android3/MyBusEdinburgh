@@ -25,23 +25,20 @@
 
 package uk.org.rivernile.android.bustracker.endpoints;
 
-import junit.framework.TestCase;
+import android.test.InstrumentationTestCase;
 import uk.org.rivernile.android.bustracker.parser.twitter.TwitterParser;
 import uk.org.rivernile.android.bustracker.parser.twitter.TwitterParserImpl;
 import uk.org.rivernile.edinburghbustracker.android.utils.EdinburghUrlBuilder;
 
 /**
- * Tests for HttpTwitterEndpoint.
+ * Tests for {@link HttpTwitterEndpoint}.
  * 
  * @author Niall Scott
  */
-public class HttpTwitterEndpointTests extends TestCase {
+public class HttpTwitterEndpointTests extends InstrumentationTestCase {
     
     private TwitterParser parser;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -49,9 +46,6 @@ public class HttpTwitterEndpointTests extends TestCase {
         parser = new TwitterParserImpl();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -60,12 +54,28 @@ public class HttpTwitterEndpointTests extends TestCase {
     }
     
     /**
-     * Test that the constructor throws an IllegalArgumentException if the
-     * urlBuilder is null.
+     * Test that the constructor throws an {@link IllegalArgumentException} if
+     * the context is {@code null}.
+     */
+    public void testConstructorWithNullContext() {
+        try {
+            new HttpTwitterEndpoint(null, parser, new EdinburghUrlBuilder());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        
+        fail("The context is set to null, so an IllegalArgumentException "
+                + "should be thrown.");
+    }
+    
+    /**
+     * Test that the constructor throws an {@link IllegalArgumentException} if
+     * the {@code urlBuilder} is {@code null}.
      */
     public void testConstructorWithNullUrlBuilder() {
         try {
-            new HttpTwitterEndpoint(parser, null);
+            new HttpTwitterEndpoint(getInstrumentation().getContext(), parser,
+                    null);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -76,11 +86,12 @@ public class HttpTwitterEndpointTests extends TestCase {
     
     /**
      * Test that no exceptions are thrown if the constructor is passed a
-     * non-null urlBuilder.
+     * non-{@code null} {@code urlBuilder}.
      * 
-     * @throws Exception If an Exception occurs, the test should fail.
+     * @throws Exception If an {@link Exception} occurs, the test should fail.
      */
     public void testConstructorWithNonNullUrlBuilder() throws Exception {
-        new HttpTwitterEndpoint(parser, new EdinburghUrlBuilder());
+        new HttpTwitterEndpoint(getInstrumentation().getContext(), parser,
+                new EdinburghUrlBuilder());
     }
 }

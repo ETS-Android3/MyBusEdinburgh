@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 /*
  * Copyright (C) 2014 Niall 'Rivernile' Scott
@@ -23,29 +23,31 @@
  *  3. Software modifications that do not alter the functionality of the
  *     software but are simply adaptations to a specific environment are
  *     exempt from clause 2.
- */ -->
+*/ -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="SelectableText"
-    style="@style/BusTimesListItemContainer" >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/padding_default"
+    android:paddingRight="@dimen/padding_default"
+    android:gravity="center_vertical" >
     <TextView
-        android:id="@+id/txtBusService"
+        android:id="@+id/txtStopName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_width="@dimen/service_name_width"
-        style="@style/BusTimesListItemText"
-        android:gravity="center"
-        android:textColor="#FFF" />
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimaryDisableOnly" />
     <TextView
-        android:id="@+id/txtBusDestination"
-        style="@style/BusTimesListItemText.Destination" />
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/padding_default"
-        android:layout_marginBottom="@dimen/padding_default"
-        android:background="?android:attr/listDivider" />
-    <Button
-        android:id="@+id/btnBusTime"
-        style="@style/BusTimesListItemText.Time" />
+        android:id="@+id/txtBusTime"
+        android:layout_width="@dimen/bustime_width"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/padding_default"
+        android:gravity="right"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimaryDisableOnly" />
 </LinearLayout>

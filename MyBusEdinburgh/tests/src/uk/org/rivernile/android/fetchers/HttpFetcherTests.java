@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Niall 'Rivernile' Scott
+ * Copyright (C) 2013 - 2014 Niall 'Rivernile' Scott
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors or contributors be held liable for
@@ -25,43 +25,58 @@
 
 package uk.org.rivernile.android.fetchers;
 
+import android.test.InstrumentationTestCase;
 import java.io.IOException;
-import junit.framework.TestCase;
 
 /**
- * Tests for HttpFetcher.
+ * Tests for {@link HttpFetcher}.
  * 
  * @author Niall Scott
  */
-public class HttpFetcherTests extends TestCase {
+public class HttpFetcherTests extends InstrumentationTestCase {
     
     /**
-     * Test that the constructor throws an IllegalArgumentException when the url
-     * is set to null.
+     * Test that the constructor throws an {@link IllegalArgumentException} when
+     * the {@link android.content.Context} is set as {@code null}.
      */
-    public void testConstructorWithNullUrl() {
+    public void testConstructorWithNullContext() {
         try {
-            new HttpFetcher(null, false);
+            new HttpFetcher(null, "http://example.com/test", false);
         } catch (IllegalArgumentException e) {
             return;
         }
         
-        fail("The url was set as null, so an IllegalArgumentException should "
-                + "be thrown.");
+        fail("The context is set as null, so an IllegalArgumentException "
+                + "should be thrown.");
     }
     
     /**
-     * Test that the constructor throws an IllegalArgumentException when the url
-     * is set to empty.
+     * Test that the constructor throws an {@link IllegalArgumentException} when
+     * the url is set to {@code null}.
      */
-    public void testConstructorWithEmptyUrl() {
+    public void testConstructorWithNullUrl() {
         try {
-            new HttpFetcher("", false);
+            new HttpFetcher(getInstrumentation().getContext(), null, false);
         } catch (IllegalArgumentException e) {
             return;
         }
         
-        fail("The url was set as empty, so an IllegalArgumentException should "
+        fail("The url is set as null, so an IllegalArgumentException should be "
+                + "thrown.");
+    }
+    
+    /**
+     * Test that the constructor throws an {@link IllegalArgumentException} when
+     * the url is set to empty.
+     */
+    public void testConstructorWithEmptyUrl() {
+        try {
+            new HttpFetcher(getInstrumentation().getContext(), "", false);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        
+        fail("The url is set as empty, so an IllegalArgumentException should "
                 + "be thrown.");
     }
     
@@ -70,21 +85,24 @@ public class HttpFetcherTests extends TestCase {
      * constructor.
      */
     public void testValidConstructor() {
-        final HttpFetcher fetcher = new HttpFetcher("http://example.com/test",
+        final HttpFetcher fetcher = new HttpFetcher(
+                getInstrumentation().getContext(), "http://example.com/test",
                 true);
         assertEquals("http://example.com/test", fetcher.getUrl());
         assertTrue(fetcher.getAllowRedirects());
     }
     
     /**
-     * Test that passing a null reader when executing the fetcher throws an
-     * IllegalArgumentException.
+     * Test that passing a {@code null} reader when executing the fetcher throws
+     * an {@link IllegalArgumentException}.
      * 
-     * @throws IOException This test is not expected to throw an IOException, so
-     * if it is thrown, let the TestCase cause a failure.
+     * @throws IOException This test is not expected to throw an
+     * {@link IOException}, so if it is thrown, let the
+     * {@link InstrumentationTestCase} cause a failure.
      */
     public void testNullReader() throws IOException {
-        final HttpFetcher fetcher = new HttpFetcher("http://example.com/test",
+        final HttpFetcher fetcher = new HttpFetcher(
+                getInstrumentation().getContext(), "http://example.com/test",
                 true);
         
         try {
@@ -93,7 +111,7 @@ public class HttpFetcherTests extends TestCase {
             return;
         }
         
-        fail("The reader was set as null, so an IllegalArgumentException "
+        fail("The reader is set as null, so an IllegalArgumentException "
                 + "should be thrown.");
     }
 }

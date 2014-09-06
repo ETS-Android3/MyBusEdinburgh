@@ -150,6 +150,13 @@ This version of strings.xml is in Italian (it_IT) -->
     
     <!--
     ************************************
+    * Strings for JourneyTimesActivity *
+    ************************************
+    -->
+    <string name="journeytimes_title">"Tempi di viaggio"</string>
+    
+    <!--
+    ************************************
     * Strings for NearestStopsActivity *
     ************************************
     -->
@@ -602,6 +609,13 @@ This version of strings.xml is in Italian (it_IT) -->
     <string name="favouritestops_menu_prox_rem">@string/prox_alert_rem</string>
     <string name="favouritestops_menu_time_add">@string/time_alert_add</string>
     <string name="favouritestops_menu_time_rem">@string/time_alert_rem</string>
+    
+    <!--
+    *****************************************
+    * Strings for JourneyTimesFragment menu *
+    *****************************************
+    -->
+    <string name="journeytimes_menu_refresh">@string/displaystopdata_menu_refresh</string>
     
     <!--
     *********************************

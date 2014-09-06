@@ -26,6 +26,7 @@
 package uk.org.rivernile.edinburghbustracker.android.ui.bustimes;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import uk.org.rivernile.android.bustracker.ui.bustimes.
         BusTimesExpandableListAdapter;
 import uk.org.rivernile.android.bustracker.ui.bustimes
@@ -40,10 +41,10 @@ import uk.org.rivernile.android.bustracker.ui.bustimes
 public class EdinburghDisplayStopDataFragment extends DisplayStopDataFragment {
     
     /**
-     * Create a new instance of this Fragment.
+     * Create a new instance of this {@link Fragment}.
      * 
-     * @param stopCode The stopCode for the bus stop to show data for.
-     * @return A new instance of this Fragment.
+     * @param stopCode The {@code stopCode} for the bus stop to show data for.
+     * @return A new instance of this {@link Fragment}.
      */
     public static EdinburghDisplayStopDataFragment newInstance(
             final String stopCode) {
@@ -56,11 +57,8 @@ public class EdinburghDisplayStopDataFragment extends DisplayStopDataFragment {
         return f;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected BusTimesExpandableListAdapter createAdapter() {
-        return new EdinburghBusTimesExpandableListAdapter(getActivity());
+        return new EdinburghBusTimesExpandableListAdapter(getActivity(), this);
     }
 }

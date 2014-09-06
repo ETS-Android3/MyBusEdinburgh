@@ -29,6 +29,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.TextView;
 import uk.org.rivernile.android.bustracker.parser.livetimes.LiveBusService;
 import uk.org.rivernile.android.bustracker.ui.bustimes
@@ -46,17 +47,17 @@ public class EdinburghBusTimesExpandableListAdapter
         extends BusTimesExpandableListAdapter {
     
     /**
-     * Create a new EdinburghBusTimesExpandableListAdapter.
+     * Create a new {@code EdinburghBusTimesExpandableListAdapter}.
      * 
-     * @param context A Context instance.
+     * @param context A {@link Context} instance. Must not be {@code null}.
+     * @param busTimeClickListener Where click events on the bus time should be
+     * sent to.
      */
-    public EdinburghBusTimesExpandableListAdapter(final Context context) {
-        super(context);
+    public EdinburghBusTimesExpandableListAdapter(final Context context,
+            final View.OnClickListener busTimeClickListener) {
+        super(context, busTimeClickListener);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void populateServiceName(final TextView txtBusService,
             final LiveBusService busService) {
@@ -78,9 +79,6 @@ public class EdinburghBusTimesExpandableListAdapter
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected boolean isNightService(final String serviceName) {
         return !TextUtils.isEmpty(serviceName) ?

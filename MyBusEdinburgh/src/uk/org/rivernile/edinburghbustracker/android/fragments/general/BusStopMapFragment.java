@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -58,6 +59,8 @@ import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import uk.org.rivernile.android.bustracker.ui.callbacks
+        .OnShowBusStopDetailsListener;
+import uk.org.rivernile.android.bustracker.ui.callbacks
         .OnShowServicesChooserListener;
 import uk.org.rivernile.edinburghbustracker.android.BusStopDatabase;
 import uk.org.rivernile.edinburghbustracker.android
@@ -76,14 +79,16 @@ import uk.org.rivernile.edinburghbustracker.android.maps.MapInfoWindow;
 import uk.org.rivernile.edinburghbustracker.android.maps.RouteLineLoader;
 
 /**
- * The BusStopMapFragment shows a Google Maps v2 MapView and depending on the
- * location of the camera, the zoom level and service filter, it shows bus stop
- * icons on the map. The user can tap on a bus stop icon to show the info
- * window (bubble). If the user taps on the info window, then the
- * BusStopDetailsFragment is shown.
+ * The {@code BusStopMapFragment} shows a Google Maps v2 {@code MapView} and
+ * depending on the location of the camera, the zoom level and service filter,
+ * it shows bus stop icons on the map.
  * 
- * The user can also select the type of map these wish to see and search for bus
- * stops and places.
+ * <p>The user can tap on a bus stop icon to show the info
+ * window (bubble). If the user taps on the info window, then the
+ * {@link BusStopDetailsFragment} is shown.</p>
+ * 
+ * <p>The user can also select the type of map these wish to see and search for
+ * bus stops and places.</p>
  * 
  * @author Niall Scott
  */
@@ -96,7 +101,7 @@ public class BusStopMapFragment extends SupportMapFragment
         MapTypeChooserDialogFragment.Callbacks,
         IndeterminateProgressDialogFragment.Callbacks {
     
-    /** The stopCode argument. */
+    /** The stop code argument. */
     public static final String ARG_STOPCODE = "stopCode";
     /** The latitude argument. */
     public static final String ARG_LATITUDE = "latitude";
@@ -110,7 +115,7 @@ public class BusStopMapFragment extends SupportMapFragment
     /** The default latitude. */
     public static final double DEFAULT_LAT = 55.948611;
     /** The default longitude. */
-    public static final double DEFAULT_LONG = -3.199811;
+    public static final double DEFAULT_LON = -3.199811;
     /** The default zoom. */
     public static final float DEFAULT_ZOOM = 11f;
     /** The default search zoom. */
@@ -144,18 +149,18 @@ public class BusStopMapFragment extends SupportMapFragment
             new HashMap<String, Marker>();
     private final HashMap<String, LinkedList<Polyline>> routeLines =
             new HashMap<String, LinkedList<Polyline>>();
-    private HashSet<Marker> geoSearchMarkers = new HashSet<Marker>();
+    private final HashSet<Marker> geoSearchMarkers = new HashSet<Marker>();
     private String searchedBusStop = null;
     private String[] services;
     private String[] chosenServices;
     private int actionBarHeight;
     
     /**
-     * Create a new instance of the BusStopMapFragment, setting the initial
-     * location to that of the stopCode provided.
+     * Create a new instance of the {@code BusStopMapFragment}, setting the
+     * initial location to that of the {@code stopCode} provided.
      * 
-     * @param stopCode The stopCode to go to.
-     * @return A new instance of this Fragment.
+     * @param stopCode The {@code stopCode} to go to.
+     * @return A new instance of this {@link Fragment}.
      */
     public static BusStopMapFragment newInstance(final String stopCode) {
         final BusStopMapFragment f = new BusStopMapFragment();
@@ -167,12 +172,12 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * Create a new instance of the BusStopMapFragment, setting the initial
-     * location specified by latitude and longitude.
+     * Create a new instance of the {@code BusStopMapFragment}, setting the
+     * initial location specified by latitude and longitude.
      * 
      * @param latitude The latitude to go to.
      * @param longitude The longitude to go to.
-     * @return A new instance of this Fragment.
+     * @return A new instance of this {@link Fragment}.
      */
     public static BusStopMapFragment newInstance(final double latitude,
             final double longitude) {
@@ -186,11 +191,12 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * Create a new instance of the BusStopMapFragment, specifying a search
-     * term. The item will be searched as soon as the Fragment is ready.
+     * Create a new instance of the {@code BusStopMapFragment}, specifying a
+     * search term. The item will be searched as soon as the {@link Fragment} is
+     * ready.
      * 
      * @param searchTerm The search term.
-     * @return A new instance of this Fragment.
+     * @return A new instance of this {@link Fragment}.
      */
     public static BusStopMapFragment newInstanceWithSearch(
             final String searchTerm) {
@@ -202,9 +208,6 @@ public class BusStopMapFragment extends SupportMapFragment
         return f;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onAttach(final Activity activity) {
         super.onAttach(activity);
@@ -217,9 +220,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -252,9 +252,6 @@ public class BusStopMapFragment extends SupportMapFragment
         setHasOptionsMenu(true);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -292,9 +289,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -309,9 +303,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -335,9 +326,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -345,9 +333,6 @@ public class BusStopMapFragment extends SupportMapFragment
         outState.putStringArray(ARG_CHOSEN_SERVICES, chosenServices);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCreateOptionsMenu(final Menu menu,
             final MenuInflater inflater) {
@@ -361,9 +346,6 @@ public class BusStopMapFragment extends SupportMapFragment
                 .getSearchableInfo(getActivity().getComponentName()));
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -382,9 +364,6 @@ public class BusStopMapFragment extends SupportMapFragment
         item.setEnabled(services != null && services.length > 0);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch(item.getItemId()) {
@@ -409,18 +388,12 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCameraChange(final CameraPosition position) {
         // If the camera has changed, force a refresh of the bus stop markers.
         refreshBusStops(position);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
         final String snippet = marker.getSnippet();
@@ -438,9 +411,6 @@ public class BusStopMapFragment extends SupportMapFragment
         return false;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onInfoWindowClick(final Marker marker) {
         if(busStopMarkers.containsValue(marker)) {
@@ -452,9 +422,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Loader onCreateLoader(final int i, final Bundle bundle) {
         switch(i) {
@@ -495,9 +462,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onLoadFinished(final Loader loader, final Object d) {
         if (isAdded()) {
@@ -518,17 +482,11 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onLoaderReset(final Loader loader) {
         // Nothing to do.
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onServicesChosen(final String[] chosenServices) {
         this.chosenServices = chosenServices;
@@ -593,9 +551,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onMapTypeChosen(final int mapType) {
         // When the user selects a new map type, change the map type.
@@ -604,9 +559,6 @@ public class BusStopMapFragment extends SupportMapFragment
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onProgressCancel() {
         // If the user cancels the search progress dialog, then cancel the
@@ -616,9 +568,10 @@ public class BusStopMapFragment extends SupportMapFragment
     
     /**
      * This is called when the back button is pressed. It is called by the
-     * underlying Activity.
+     * underlying {@link Activity}.
      * 
-     * @return true if the back event was handled here, false if not.
+     * @return {@code true} if the back event was handled here, {@code false} if
+     * not.
      */
     public boolean onBackPressed() {
         if(!geoSearchMarkers.isEmpty()) {
@@ -651,8 +604,8 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * This method is called by the underlying Activity when a search has been
-     * initiated.
+     * This method is called by the underlying {@link Activity} when a search
+     * has been initiated.
      * 
      * @param searchTerm What to search for.
      */
@@ -689,10 +642,10 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * Move the camera to a given stopCode, and show the info window for that
-     * stopCode when the camera gets there.
+     * Move the camera to a given {@code stopCode}, and show the info window for
+     * that {@code stopCode} when the camera gets there.
      * 
-     * @param stopCode The stopCode to move to.
+     * @param stopCode The {@code stopCode} to move to.
      */
     public void moveCameraToBusStop(final String stopCode) {
         if(stopCode == null || stopCode.length() == 0) {
@@ -705,7 +658,7 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * Move the camera to a given LatLng location.
+     * Move the camera to a given {@link LatLng} location.
      * 
      * @param location Where to move the camera to.
      * @param zoomLevel The zoom level of the camera.
@@ -732,8 +685,9 @@ public class BusStopMapFragment extends SupportMapFragment
      * camera has moved, a configuration change has happened or the user has
      * selected services to filter by.
      * 
-     * @param position If a CameraPosition is available, send it in so that it
-     * doesn't need to be looked up again. If it's not available, use null.
+     * @param position If a {@link CameraPosition} is available, send it in so
+     * that it doesn't need to be looked up again. If it's not available, use
+     * {@code null}.
      */
     private void refreshBusStops(CameraPosition position) {
         if(map == null || !isAdded()) {
@@ -768,8 +722,8 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * This method is called when the bus stops Loader has finished loading bus
-     * stops and has data ready to be populated on the map.
+     * This method is called when the bus stops {@link Loader} has finished
+     * loading bus stops and has data ready to be populated on the map.
      * 
      * @param result The data to be populated on the map.
      */
@@ -835,8 +789,8 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * This method is called when the search Loader has finished loading and
-     * data is to be populated on the map.
+     * This method is called when the search {@link Loader} has finished loading
+     * and data is to be populated on the map.
      * 
      * @param result The data to be populated on the map.
      */
@@ -893,12 +847,13 @@ public class BusStopMapFragment extends SupportMapFragment
     }
     
     /**
-     * Add route lines to the Map. This is called when the route lines loader
-     * has finished loading the route lines.
+     * Add route lines to the Map. This is called when the route lines
+     * {@link Loader} has finished loading the route lines.
      * 
-     * @param result A HashMap, mapping the service name to a LinkedList of
-     * PolylineOptions objects. This is a LinkedList because a service may have
-     * more than one Polyline.
+     * @param result A {@link HashMap}, mapping the service name to a
+     * {@link LinkedList} of {@link PolylineOptions} objects. This is a
+     * {@link LinkedList} because a service may have more than one
+     * {@link Polyline}.
      */
     private void addRouteLines(
             final HashMap<String, LinkedList<PolylineOptions>> result) {
@@ -929,13 +884,15 @@ public class BusStopMapFragment extends SupportMapFragment
      * Move the camera to the initial location. The initial location is
      * determined by the following order;
      * 
-     * - If the args contains a stopCode, go there.
-     * - If the args contains a latitude AND a longitude, go there.
-     * - If the SharedPreferences have mappings for a previous location, then
-     *   go there.
-     * - Otherwise, go to the default map location, as defined by
-     *   {@link #DEFAULT_LAT} and {@link #DEFAULT_LONG) at
-     *   {@link #DEFAULT_ZOOM}.
+     * <ol>
+     * <li>If the args contains a {@code stopCode}, go there.</li>
+     * <li>If the args contains a latitude AND a longitude, go there.</li>
+     * <li>If the {@link SharedPreferences} have mappings for a previous
+     * location, then go there.</li>
+     * <li>Otherwise, go to the default map location, as defined by
+     * {@link #DEFAULT_LAT} and {@link #DEFAULT_LON} at
+     * {@link #DEFAULT_ZOOM}.</li>
+     * </ol>
      */
     private void moveCameraToInitialLocation() {
         final Bundle args = getArguments();
@@ -957,7 +914,7 @@ public class BusStopMapFragment extends SupportMapFragment
                     String.valueOf(DEFAULT_LAT));
             final String longitude = sp.getString(
                     PreferencesActivity.PREF_MAP_LAST_LONGITUDE,
-                    String.valueOf(DEFAULT_LONG));
+                    String.valueOf(DEFAULT_LON));
             final float zoom = sp.getFloat(
                     PreferencesActivity.PREF_MAP_LAST_ZOOM, DEFAULT_ZOOM);
             
@@ -965,17 +922,18 @@ public class BusStopMapFragment extends SupportMapFragment
                 moveCameraToLocation(new LatLng(Double.parseDouble(latitude),
                         Double.parseDouble(longitude)), zoom, false);
             } catch(NumberFormatException e) {
-                moveCameraToLocation(new LatLng(DEFAULT_LAT, DEFAULT_LONG),
+                moveCameraToLocation(new LatLng(DEFAULT_LAT, DEFAULT_LON),
                         DEFAULT_ZOOM, false);
             }
         }
     }
     
     /**
-     * Any Activities which host this Fragment must implement this interface to
-     * handle navigation events.
+     * Any {@link Activity Activities} which host this {@link Fragment} must
+     * implement this interface to handle navigation events.
      */
-    public static interface Callbacks extends OnShowServicesChooserListener {
+    public static interface Callbacks extends OnShowServicesChooserListener,
+            OnShowBusStopDetailsListener {
         
         /**
          * This is called when the user wishes to select their preferred map
@@ -992,15 +950,8 @@ public class BusStopMapFragment extends SupportMapFragment
         public void onShowSearchProgress(String message);
         
         /**
-         * This is called when the search progress should be dimissed.
+         * This is called when the search progress should be dismissed.
          */
         public void onDismissSearchProgress();
-        
-        /**
-         * This is called when the user wants to see details about a bus stop.
-         * 
-         * @param stopCode The bus stop code the user wants to see details for.
-         */
-        public void onShowBusStopDetails(String stopCode);
     }
 }

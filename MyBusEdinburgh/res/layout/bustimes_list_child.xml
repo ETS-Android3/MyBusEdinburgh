@@ -33,7 +33,13 @@
         android:id="@+id/txtBusDestination"
         style="@style/BusTimesListItemText.Destination"
         android:layout_marginLeft="@dimen/service_name_width" />
-    <TextView
-        android:id="@+id/txtBusTime"
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/padding_default"
+        android:layout_marginBottom="@dimen/padding_default"
+        android:background="?android:attr/listDivider" />
+    <Button
+        android:id="@+id/btnBusTime"
         style="@style/BusTimesListItemText.Time" />
 </LinearLayout>

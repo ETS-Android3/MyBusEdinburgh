@@ -23,39 +23,34 @@
  *     exempt from clause 2.
  */
 
-package uk.org.rivernile.edinburghbustracker.android;
+package uk.org.rivernile.android.fetchers;
 
-import uk.org.rivernile.android.bustracker.FragmentFactory;
-import uk.org.rivernile.android.bustracker.ui.bustimes
-        .DisplayStopDataFragment;
-import uk.org.rivernile.android.bustracker.ui.journeytimes.JourneyTimesFragment;
-import uk.org.rivernile.edinburghbustracker.android.ui.bustimes
-        .EdinburghDisplayStopDataFragment;
+import java.io.IOException;
 
 /**
- * The EdinburghFragmentFactory returns the correct {@link Fragment}s for the
- * Edinburgh-specific application.
+ * This {@link Exception} is thrown when it has been determined that there is no
+ * connectivity to a network which enables a {@link Fetcher} to complete its
+ * request. This check may be done before it attempts to establish a connection.
  * 
  * @author Niall Scott
  */
-public final class EdinburghFragmentFactory implements FragmentFactory {
+public class ConnectivityUnavailableException extends IOException {
     
     /**
-     * This constructor exists to prevent instantiation outside this package.
+     * Constructs a new {@code ConnectivityUnavailableException} with the
+     * default message filled in.
      */
-    EdinburghFragmentFactory() {
-        super();
+    public ConnectivityUnavailableException() {
+        super("Connectivity is not available.");
     }
-
-    @Override
-    public DisplayStopDataFragment getDisplayStopDataFragment(
-            final String stopCode) {
-        return EdinburghDisplayStopDataFragment.newInstance(stopCode);
-    }
-
-    @Override
-    public JourneyTimesFragment getJourneyTimesFragment(final String stopCode,
-            final String journeyId) {
-        return JourneyTimesFragment.newInstance(stopCode, journeyId);
+    
+    /**
+     * Constructs a new {@code ConnectivityUnavailableException}, specifying the
+     * message.
+     * 
+     * @param detailMessage The {@link Exception} message.
+     */
+    public ConnectivityUnavailableException(final String detailMessage) {
+        super(detailMessage);
     }
 }

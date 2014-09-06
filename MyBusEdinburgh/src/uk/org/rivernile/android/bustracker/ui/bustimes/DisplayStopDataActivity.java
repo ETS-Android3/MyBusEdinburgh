@@ -25,11 +25,13 @@
 
 package uk.org.rivernile.android.bustracker.ui.bustimes;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import uk.org.rivernile.android.bustracker.BusApplication;
+import uk.org.rivernile.android.bustracker.ui.journeytimes.JourneyTimesActivity;
 import uk.org.rivernile.android.utils.NavigationUtils;
 import uk.org.rivernile.edinburghbustracker.android
         .AddEditFavouriteStopActivity;
@@ -44,16 +46,15 @@ import uk.org.rivernile.edinburghbustracker.android.fragments.dialogs
         .DeleteTimeAlertDialogFragment;
 
 /**
- * This Activity hosts a DisplayStopDataFragment which shows the user live bus
- * times.
+ * This {@link Activity} hosts a {@link DisplayStopDataFragment} which shows the
+ * user live bus times.
  * 
- * This Activity can be started by any other application with the following
- * Intent action;
+ * <p>This {@link Activity} can be started by any other application with the
+ * {@link Intent} action {@link #ACTION_VIEW_STOP_DATA}.</p>
  * 
- * uk.org.rivernile.edinburghbustracker.android.ACTION_VIEW_STOP_DATA
- * 
- * A String parameter called "stopCode" must be added as an extra to the Intent
- * which contains the bus stop code to be loaded.
+ * <p>A {@link String} parameter called "{@code stopCode}" must be added as an
+ * extra to the {@link Intent} which contains the bus stop code to be loaded.
+ * </p>
  * 
  * @author Niall Scott
  * @see DisplayStopDataFragment
@@ -64,12 +65,12 @@ public class DisplayStopDataActivity extends ActionBarActivity
         DeleteProximityAlertDialogFragment.Callbacks,
         DeleteTimeAlertDialogFragment.Callbacks {
     
-    /** The ACTION_VIEW_STOP_DATA intent action name. */
+    /** The {@code ACTION_VIEW_STOP_DATA} {@link Intent} action name. */
     public static final String ACTION_VIEW_STOP_DATA =
             "uk.org.rivernile.edinburghbustracker.android."
             + "ACTION_VIEW_STOP_DATA";
     
-    /** The Intent argument for the stop code. */
+    /** The {@link Intent} argument for the stop code. */
     public static final String ARG_STOPCODE =
             DisplayStopDataFragment.ARG_STOPCODE;
     
@@ -77,10 +78,7 @@ public class DisplayStopDataActivity extends ActionBarActivity
             "deleteFavDialog";
     private static final String DIALOG_DELETE_PROX_ALERT = "delProxAlertDialog";
     private static final String DIALOG_DELETE_TIME_ALERT = "delTimeAlertDialog";
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,10 +103,7 @@ public class DisplayStopDataActivity extends ActionBarActivity
                     .add(R.id.fragmentContainer, f).commit();
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch(item.getItemId()) {
@@ -121,9 +116,16 @@ public class DisplayStopDataActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public void onShowJourneyTimes(final String stopCode,
+            final String journeyId) {
+        final Intent intent = new Intent(this, JourneyTimesActivity.class);
+        intent.putExtra(JourneyTimesActivity.ARG_STOPCODE, stopCode);
+        intent.putExtra(JourneyTimesActivity.ARG_JOURNEY_ID, journeyId);
+        
+        startActivity(intent);
+    }
+
     @Override
     public void onShowConfirmFavouriteDeletion(final String stopCode) {
         DeleteFavouriteDialogFragment.newInstance(stopCode)
@@ -131,27 +133,18 @@ public class DisplayStopDataActivity extends ActionBarActivity
                         DIALOG_CONFIRM_DELETE_FAVOURITE);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onShowConfirmDeleteProximityAlert() {
         new DeleteProximityAlertDialogFragment()
                 .show(getSupportFragmentManager(), DIALOG_DELETE_PROX_ALERT);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onShowConfirmDeleteTimeAlert() {
         new DeleteTimeAlertDialogFragment()
                 .show(getSupportFragmentManager(), DIALOG_DELETE_TIME_ALERT);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onShowAddFavouriteStop(final String stopCode,
             final String stopName) {
@@ -163,9 +156,6 @@ public class DisplayStopDataActivity extends ActionBarActivity
         startActivity(intent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onShowAddProximityAlert(final String stopCode) {
         final Intent intent = new Intent(this, AddProximityAlertActivity.class);
@@ -173,9 +163,6 @@ public class DisplayStopDataActivity extends ActionBarActivity
         startActivity(intent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onShowAddTimeAlert(final String stopCode,
             final String[] defaultServices) {
@@ -190,9 +177,6 @@ public class DisplayStopDataActivity extends ActionBarActivity
         startActivity(intent);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onConfirmFavouriteDeletion() {
         try {
@@ -208,9 +192,6 @@ public class DisplayStopDataActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCancelFavouriteDeletion() {
         try {
@@ -225,10 +206,7 @@ public class DisplayStopDataActivity extends ActionBarActivity
             // Unable to pass the callback on. Silently fail.
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onConfirmProximityAlertDeletion() {
         try {
@@ -244,9 +222,6 @@ public class DisplayStopDataActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCancelProximityAlertDeletion() {
         try {
@@ -261,10 +236,7 @@ public class DisplayStopDataActivity extends ActionBarActivity
             // Unable to pass the callback on. Silently fail.
         }
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void onConfirmTimeAlertDeletion() {
         try {
@@ -280,9 +252,6 @@ public class DisplayStopDataActivity extends ActionBarActivity
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void onCancelTimeAlertDeletion() {
         try {

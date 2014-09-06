@@ -25,24 +25,21 @@
 
 package uk.org.rivernile.android.bustracker.endpoints;
 
-import junit.framework.TestCase;
+import android.test.InstrumentationTestCase;
 import uk.org.rivernile.android.bustracker.parser.livetimes.BusParser;
 import uk.org.rivernile.edinburghbustracker.android.parser.livetimes
         .EdinburghParser;
 import uk.org.rivernile.edinburghbustracker.android.utils.EdinburghUrlBuilder;
 
 /**
- * Tests for HttpBusTrackerEndpoint.
+ * Tests for {@link HttpBusTrackerEndpoint}.
  * 
  * @author Niall Scott
  */
-public class HttpBusTrackerEndpointTests extends TestCase {
+public class HttpBusTrackerEndpointTests extends InstrumentationTestCase {
     
     private BusParser parser;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -50,9 +47,6 @@ public class HttpBusTrackerEndpointTests extends TestCase {
         parser = new EdinburghParser();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -61,12 +55,28 @@ public class HttpBusTrackerEndpointTests extends TestCase {
     }
     
     /**
-     * Test that the constructor throws an IllegalArgumentException if the
-     * urlBuilder is null.
+     * Test that the constructor throws an {@link IllegalArgumentException} if
+     * the {@code urlBuilder} is {@code null}.
+     */
+    public void testConstructorWithNullContext() {
+        try {
+            new HttpBusTrackerEndpoint(null, parser, new EdinburghUrlBuilder());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        
+        fail("The context is set to null, so an IllegalArgumentException "
+                + "should be thrown.");
+    }
+    
+    /**
+     * Test that the constructor throws an {@link IllegalArgumentException} if
+     * the {@code urlBuilder} is {@code null}.
      */
     public void testConstructorWithNullUrlBuilder() {
         try {
-            new HttpBusTrackerEndpoint(parser, null);
+            new HttpBusTrackerEndpoint(getInstrumentation().getContext(),
+                    parser, null);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -77,11 +87,12 @@ public class HttpBusTrackerEndpointTests extends TestCase {
     
     /**
      * Test that no exceptions are thrown if the constructor is passed a
-     * non-null urlBuilder.
+     * non-{@code null} {@code urlBuilder}.
      * 
-     * @throws Exception If an Exception occurs, the test should fail.
+     * @throws Exception If an {@link Exception} occurs, the test should fail.
      */
     public void testConstructorWithNonNullUrlBuilder() throws Exception {
-        new HttpBusTrackerEndpoint(parser, new EdinburghUrlBuilder());
+        new HttpBusTrackerEndpoint(getInstrumentation().getContext(), parser,
+                new EdinburghUrlBuilder());
     }
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 /*
  * Copyright (C) 2014 Niall 'Rivernile' Scott
@@ -23,29 +23,36 @@
  *  3. Software modifications that do not alter the functionality of the
  *     software but are simply adaptations to a specific environment are
  *     exempt from clause 2.
- */ -->
+*/ -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="SelectableText"
-    style="@style/BusTimesListItemContainer" >
-    <TextView
-        android:id="@+id/txtBusService"
-        android:layout_height="wrap_content"
-        android:layout_width="@dimen/service_name_width"
-        style="@style/BusTimesListItemText"
-        android:gravity="center"
-        android:textColor="#FFF" />
-    <TextView
-        android:id="@+id/txtBusDestination"
-        style="@style/BusTimesListItemText.Destination" />
-    <View
-        android:layout_width="1dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center" >
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/padding_default"
-        android:layout_marginBottom="@dimen/padding_default"
-        android:background="?android:attr/listDivider" />
-    <Button
-        android:id="@+id/btnBusTime"
-        style="@style/BusTimesListItemText.Time" />
+        android:paddingLeft="@dimen/padding_double"
+        android:paddingRight="@dimen/padding_double"
+        android:scrollbarStyle="outsideOverlay" />
+    <FrameLayout
+        android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateOnly="true" />
+        <TextView
+            android:id="@+id/txtError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/padding_double"
+            android:visibility="gone"
+            android:textIsSelectable="true" />
+    </FrameLayout>
 </LinearLayout>

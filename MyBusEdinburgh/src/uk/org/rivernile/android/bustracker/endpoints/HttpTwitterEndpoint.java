@@ -25,6 +25,7 @@
 
 package uk.org.rivernile.android.bustracker.endpoints;
 
+import android.content.Context;
 import java.util.List;
 import uk.org.rivernile.android.bustracker.parser.twitter.Tweet;
 import uk.org.rivernile.android.bustracker.parser.twitter.TwitterException;
@@ -38,32 +39,38 @@ import uk.org.rivernile.android.fetchers.HttpFetcher;
  */
 public class HttpTwitterEndpoint extends TwitterEndpoint {
     
+    private final Context context;
     private final UrlBuilder urlBuilder;
     
     /**
-     * Create a new HttpTwitterEndpoint. The arguments must not be null.
+     * Create a new {@code HttpTwitterEndpoint}. The arguments must not be
+     * {@code null}.
      * 
-     * @param parser The parser to use to parse the data.
-     * @param urlBuilder The UrlBuilder to use.
+     * @param context A {@link Context} instance. Must not be {@code null}.
+     * @param parser The parser to use to parse the data. Must not be
+     * {@code null}.
+     * @param urlBuilder The UrlBuilder to use. Must not be {@code null}.
      */
-    public HttpTwitterEndpoint(final TwitterParser parser,
-            final UrlBuilder urlBuilder) {
+    public HttpTwitterEndpoint(final Context context,
+            final TwitterParser parser, final UrlBuilder urlBuilder) {
         super(parser);
+        
+        if (context == null) {
+            throw new IllegalArgumentException("The context must not be null.");
+        }
         
         if (urlBuilder == null) {
             throw new IllegalArgumentException("The urlBuilder must not be "
                     + "null.");
         }
         
+        this.context = context;
         this.urlBuilder = urlBuilder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public List<Tweet> getTweets() throws TwitterException {
-        final HttpFetcher fetcher = new HttpFetcher(urlBuilder
+        final HttpFetcher fetcher = new HttpFetcher(context, urlBuilder
                 .getTwitterUpdatesUrl().toString(), false);
         
         return getParser().getTweets(fetcher);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Niall 'Rivernile' Scott
+ * Copyright (C) 2013 - 2014 Niall 'Rivernile' Scott
  *
  * This software is provided 'as-is', without any express or implied
  * warranty.  In no event will the authors or contributors be held liable for
@@ -25,6 +25,9 @@
 
 package uk.org.rivernile.android.fetchers;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,40 +35,55 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * A HttpFetcher fetches data from a HTTP server, specified by the given URL.
- * The data is then given in to an instance of a FetcherStreamReader. This class
- * takes care of opening and closing the file.
+ * A {@code HttpFetcher} fetches data from a HTTP server, specified by the given
+ * URL. The data is then given in to an instance of a
+ * {@link FetcherStreamReader}. This class takes care of opening and closing the
+ * file.
  * 
  * @author Niall Scott
  */
 public class HttpFetcher implements Fetcher {
     
+    private final ConnectivityManager connMan;
     private final String url;
     private final boolean allowRedirects;
     
     /**
-     * Create a new HttpFetcher.
+     * Create a new {@code HttpFetcher}.
      * 
-     * @param url The URL to fetch from.
-     * @param allowRedirects true if redirects are allowed, false if not.
+     * @param context A {@link Context} instance. Must not be {@code null}.
+     * @param url The URL to fetch from. Must not be {@code null} or empty.
+     * @param allowRedirects {@code true} if redirects are allowed,
+     * {@code false} if not.
      */
-    public HttpFetcher(final String url, final boolean allowRedirects) {
+    public HttpFetcher(final Context context, final String url,
+            final boolean allowRedirects) {
+        if (context == null) {
+            throw new IllegalArgumentException("The context must not be null.");
+        }
+        
         if (TextUtils.isEmpty(url)) {
             throw new IllegalArgumentException("The url must not be null or "
                     + "empty.");
         }
         
+        connMan = (ConnectivityManager) context.getSystemService(
+                Context.CONNECTIVITY_SERVICE);
         this.url = url;
         this.allowRedirects = allowRedirects;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void executeFetcher(FetcherStreamReader reader) throws IOException {
+    public void executeFetcher(final FetcherStreamReader reader)
+            throws IOException {
         if (reader == null) {
             throw new IllegalArgumentException("The reader cannot be null.");
+        }
+        
+        // Check that network access is possible before continuing.
+        final NetworkInfo networkInfo = connMan.getActiveNetworkInfo();
+        if (networkInfo == null || !networkInfo.isConnected()) {
+            throw new ConnectivityUnavailableException();
         }
         
         HttpURLConnection conn = null;
@@ -94,9 +112,9 @@ public class HttpFetcher implements Fetcher {
     }
     
     /**
-     * Get the URL used by this HttpFetcher.
+     * Get the URL used by this {@code HttpFetcher}.
      * 
-     * @return The URL used by this HttpFetcher.
+     * @return The URL used by this {@code HttpFetcher}.
      */
     public String getUrl() {
         return url;
@@ -105,7 +123,7 @@ public class HttpFetcher implements Fetcher {
     /**
      * Get whether this implementation allows redirects or not.
      * 
-     * @return true if redirects are allowed, false if not.
+     * @return {@code true} if redirects are allowed, {@code false} if not.
      */
     public boolean getAllowRedirects() {
         return allowRedirects;

@@ -34,7 +34,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,15 +55,15 @@ import uk.org.rivernile.edinburghbustracker.android.BusStopDatabase;
 import uk.org.rivernile.edinburghbustracker.android.R;
 
 /**
- * This Adapter is for use in an {@link android.widget.ExpandableListView} to
- * display bus times in an expandable/collapsible fashion.
+ * This {@link Adapter} is for use in an {@link ExpandableListView} to display
+ * bus times in an expandable/collapsible fashion.
  * 
  * @author Niall Scott
  */
 public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     
     /**
-     * This enum describes the ways in which the user may order the bus
+     * This {@code enum} describes the ways in which the user may order the bus
      * services.
      */
     public static enum Order {
@@ -73,6 +77,7 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     private final LayoutInflater inflater;
     private final BusStopDatabase bsd;
     private final int defaultColour;
+    private final View.OnClickListener busTimeClickListener;
     
     private DateFormat busTimeFormatter;
     private LiveBusStop busStop;
@@ -82,16 +87,25 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     private Order order = Order.SERVICE_NAME;
     
     /**
-     * Create a new BusTimesExpandableListAdapter.
+     * Create a new {@code BusTimesExpandableListAdapter}.
      * 
-     * @param context A Context instance.
+     * @param context A Context instance. Must not be {@code null}.
+     * @param busTimeClickListener Where click events on the bus time should be
+     * sent to.
      */
-    public BusTimesExpandableListAdapter(final Context context) {
+    public BusTimesExpandableListAdapter(final Context context,
+            final View.OnClickListener busTimeClickListener) {
         if (context == null) {
             throw new IllegalArgumentException("The context must not be null.");
         }
         
+        if (busTimeClickListener == null) {
+            throw new IllegalArgumentException("The bus time click listener "
+                    + "must not be null.");
+        }
+        
         this.context = context;
+        this.busTimeClickListener = busTimeClickListener;
         inflater = LayoutInflater.from(context);
         defaultColour = context.getResources().getColor(R.color
                     .defaultBusColour);
@@ -101,17 +115,11 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         bsd = app.getBusStopDatabase();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getGroupCount() {
         return busServices != null ? busServices.size() : 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getChildrenCount(final int groupPosition) {
         final LiveBusService busService = getGroup(groupPosition);
@@ -123,9 +131,6 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         return count > 0 ? count : 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LiveBusService getGroup(final int groupPosition) {
         return busServices != null && groupPosition >= 0 &&
@@ -133,9 +138,6 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
                 busServices.get(groupPosition) : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LiveBus getChild(final int groupPosition, int childPosition) {
         // childPosition is incremented as the first item is displayed in the
@@ -152,18 +154,12 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getGroupId(final int groupPosition) {
         final LiveBusService busService = getGroup(groupPosition);
         return busService != null ? busService.getServiceName().hashCode() : 0L;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long getChildId(final int groupPosition, final int childPosition) {
         final LiveBus bus = getChild(groupPosition, childPosition);
@@ -172,17 +168,11 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         return journeyId != null ? journeyId.hashCode() : 0L;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean hasStableIds() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public View getGroupView(final int groupPosition, final boolean isExpanded,
             final View convertView, final ViewGroup parent) {
@@ -208,9 +198,11 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
                     .findViewById(R.id.txtBusService);
             holder.txtBusDestination = (TextView) v
                     .findViewById(R.id.txtBusDestination);
-            holder.txtBusTime = (TextView) v.findViewById(R.id.txtBusTime);
+            holder.btnBusTime = (Button) v.findViewById(R.id.btnBusTime);
             
             v.setTag(holder);
+            
+            holder.btnBusTime.setOnClickListener(busTimeClickListener);
         } else {
             v = convertView;
             holder = (GroupViewHolder) v.getTag();
@@ -222,9 +214,6 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         return v;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public View getChildView(final int groupPosition, final int childPosition,
             final boolean isLastChild, final View convertView,
@@ -242,9 +231,11 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
             final ChildViewHolder holder = new ChildViewHolder();
             holder.txtBusDestination = (TextView) v
                     .findViewById(R.id.txtBusDestination);
-            holder.txtBusTime = (TextView) v.findViewById(R.id.txtBusTime);
+            holder.btnBusTime = (Button) v.findViewById(R.id.btnBusTime);
             
             v.setTag(holder);
+            
+            holder.btnBusTime.setOnClickListener(busTimeClickListener);
         } else {
             v = convertView;
         }
@@ -254,9 +245,6 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         return v;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isChildSelectable(final int groupPosition,
             final int childPosition) {
@@ -264,9 +252,9 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     }
     
     /**
-     * Get the Context used by this ExpandableListAdapter.
+     * Get the {@link Context} used by this {@link ExpandableListAdapter}.
      * 
-     * @return The Context used by this ExpandableListAdapter.
+     * @return The {@link Context} used by this {@link ExpandableListAdapter}.
      */
     public final Context getContext() {
         return context;
@@ -275,7 +263,7 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     /**
      * Get whether night services are shown or not.
      * 
-     * @return true if night services are shown, false if not.
+     * @return {@code true} if night services are shown, {@code false} if not.
      * @see #setShowNightServices(boolean)
      */
     public boolean getShowNightServices() {
@@ -305,9 +293,9 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     
     /**
      * Set the bus stop that holds the {@link List} of {@link LiveBusService}s
-     * to use in this Adapter.
+     * to use in this {@link Adapter}.
      * 
-     * @param busStop The {@link LiveBusStop} to use in this Adapter.
+     * @param busStop The {@link LiveBusStop} to use in this {@link Adapter}.
      */
     public void setBusStop(final LiveBusStop busStop) {
         if (this.busStop != busStop) {
@@ -319,8 +307,8 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     /**
      * Set whether night services are shown or not.
      * 
-     * @param showNightServices true if night services are to be shown, false if
-     * not.
+     * @param showNightServices {@code true} if night services are to be shown,
+     * {@code false} if not.
      */
     public void setShowNightServices(final boolean showNightServices) {
         if (this.showNightServices != showNightServices) {
@@ -342,9 +330,9 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     }
     
     /**
-     * Populate this Adapter's internal list of bus services. How this list is
-     * populated depends if showing night services is enabled, and the preferred
-     * ordering of services.
+     * Populate this {@link Adapter}'s internal list of bus services. How this
+     * list is populated depends if showing night services is enabled, and the
+     * preferred ordering of services.
      */
     private void populateBusServices() {
         if (busStop == null) {
@@ -402,8 +390,8 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
      * Populate the service name {@link TextView} with the service name and
      * apply any required styling.
      * 
-     * @param txtBusService The TextView that is populated with the service
-     * name.
+     * @param txtBusService The {@link TextView} that is populated with the
+     * service name.
      * @param busService The bus service to use.
      */
     @SuppressLint({"NewAPI"})
@@ -476,8 +464,8 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
                                     destination));
                 }
                 
-                if (holder.txtBusTime != null) {
-                    holder.txtBusTime.setVisibility(View.GONE);
+                if (holder.btnBusTime != null) {
+                    holder.btnBusTime.setVisibility(View.GONE);
                 }
                 
                 return;
@@ -486,7 +474,7 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
             }
         }
         
-        if (holder.txtBusTime != null) {
+        if (holder.btnBusTime != null) {
             String timeToDisplay;
             final int minutes = bus.getDepartureMinutes();
             
@@ -504,8 +492,8 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
                         R.string.displaystopdata_estimated_time, timeToDisplay);
             }
             
-            holder.txtBusTime.setText(timeToDisplay);
-            holder.txtBusTime.setVisibility(View.VISIBLE);
+            holder.btnBusTime.setText(timeToDisplay);
+            holder.btnBusTime.setVisibility(View.VISIBLE);
         }
     }
     
@@ -528,7 +516,8 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
      * 
      * @param serviceName The name of the service to test if it's a night
      * service.
-     * @return true if the service is a night service, false if not.
+     * @return {@code true} if the service is a night service, {@code false} if
+     * not.
      */
     protected boolean isNightService(final String serviceName) {
         return false;
@@ -568,18 +557,18 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
     };
     
     /**
-     * A ChildViewHolder is used to hold references to the Views contained
-     * within the child elements as {@link View#findViewById(int)} is
+     * A {@code ChildViewHolder} is used to hold references to the {@link View}s
+     * contained within the child elements as {@link View#findViewById(int)} is
      * inefficient when it may be constantly called as a list is scrolled.
      */
     protected static class ChildViewHolder {
         TextView txtBusDestination;
-        TextView txtBusTime;
+        Button btnBusTime;
     }
     
     /**
-     * A GroupViewHolder is used to hold references to the Views contained
-     * within the group elements as {@link View#findViewById(int)} is
+     * A {@code GroupViewHolder} is used to hold references to the {@link View}s
+     * contained within the group elements as {@link View#findViewById(int)} is
      * inefficient when it may be constantly called as a list is scrolled.
      */
     protected static class GroupViewHolder extends ChildViewHolder {
@@ -587,8 +576,8 @@ public class BusTimesExpandableListAdapter extends BaseExpandableListAdapter {
         
         /**
          * Get the {@link TextView} that displays the service name. This method
-         * exists so that subclasses have read-only access to the txtBusService
-         * field held in this class.
+         * exists so that subclasses have read-only access to the
+         * {@code txtBusService} field held in this class.
          * 
          * @return The {@link TextView} that shows the service name.
          */

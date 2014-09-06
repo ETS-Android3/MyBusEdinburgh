@@ -25,7 +25,7 @@
 
 package uk.org.rivernile.android.bustracker.endpoints;
 
-import junit.framework.TestCase;
+import android.test.InstrumentationTestCase;
 import uk.org.rivernile.android.bustracker.parser.database
         .DatabaseVersionParser;
 import uk.org.rivernile.edinburghbustracker.android.parser.database
@@ -33,17 +33,14 @@ import uk.org.rivernile.edinburghbustracker.android.parser.database
 import uk.org.rivernile.edinburghbustracker.android.utils.EdinburghUrlBuilder;
 
 /**
- * Tests for HttpDatabaseEndpoint.
+ * Tests for {@link HttpDatabaseEndpoint}.
  * 
  * @author Niall Scott
  */
-public class HttpDatabaseEndpointTests extends TestCase {
+public class HttpDatabaseEndpointTests extends InstrumentationTestCase {
     
     private DatabaseVersionParser parser;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -51,9 +48,6 @@ public class HttpDatabaseEndpointTests extends TestCase {
         parser = new EdinburghDatabaseVersionParser();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
@@ -62,12 +56,28 @@ public class HttpDatabaseEndpointTests extends TestCase {
     }
     
     /**
-     * Test that the constructor throws an IllegalArgumentException if the
-     * urlBuilder is null.
+     * Test that the constructor throws an {@link IllegalArgumentException} if
+     * the context is {@code null}.
+     */
+    public void testConstructorWithNullContext() {
+        try {
+            new HttpDatabaseEndpoint(null, parser, new EdinburghUrlBuilder());
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        
+        fail("The context is set to null, so an IllegalArgumentException "
+                + "should be thrown.");
+    }
+    
+    /**
+     * Test that the constructor throws an {@link IllegalArgumentException} if
+     * the {@code urlBuilder} is {@code null}.
      */
     public void testConstructorWithNullUrlBuilder() {
         try {
-            new HttpDatabaseEndpoint(parser, null);
+            new HttpDatabaseEndpoint(getInstrumentation().getContext(), parser,
+                    null);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -78,11 +88,12 @@ public class HttpDatabaseEndpointTests extends TestCase {
     
     /**
      * Test that no exceptions are thrown if the constructor is passed a
-     * non-null urlBuilder.
+     * non-{@code null} {@code urlBuilder}.
      * 
-     * @throws Exception If an Exception occurs, the test should fail.
+     * @throws Exception If an {@link Exception} occurs, the test should fail.
      */
     public void testConstructorWithNonNullUrlBuilder() throws Exception {
-        new HttpDatabaseEndpoint(parser, new EdinburghUrlBuilder());
+        new HttpDatabaseEndpoint(getInstrumentation().getContext(), parser,
+                new EdinburghUrlBuilder());
     }
 }

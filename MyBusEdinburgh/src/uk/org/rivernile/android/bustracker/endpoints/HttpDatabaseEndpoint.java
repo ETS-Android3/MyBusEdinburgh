@@ -25,6 +25,7 @@
 
 package uk.org.rivernile.android.bustracker.endpoints;
 
+import android.content.Context;
 import uk.org.rivernile.android.bustracker.parser.database
         .DatabaseEndpointException;
 import uk.org.rivernile.android.bustracker.parser.database.DatabaseVersion;
@@ -39,33 +40,39 @@ import uk.org.rivernile.android.fetchers.HttpFetcher;
  */
 public class HttpDatabaseEndpoint extends DatabaseEndpoint {
     
+    private final Context context;
     private final UrlBuilder urlBuilder;
     
     /**
-     * Create a new HttpDatabaseEndpoint. The arguments must not be null.
+     * Create a new {@code HttpDatabaseEndpoint}. The arguments must not be
+     * {@code null}.
      * 
-     * @param parser The parser to use to parse the data.
-     * @param urlBuilder The UrlBuilder to use.
+     * @param context A {@link Context} instance. Must not be {@code null}.
+     * @param parser The parser to use to parse the data. Must not be
+     * {@code null}.
+     * @param urlBuilder The UrlBuilder to use. Must not be {@code null}.
      */
-    public HttpDatabaseEndpoint(final DatabaseVersionParser parser,
-            final UrlBuilder urlBuilder) {
+    public HttpDatabaseEndpoint(final Context context,
+            final DatabaseVersionParser parser, final UrlBuilder urlBuilder) {
         super(parser);
+        
+        if (context == null) {
+            throw new IllegalArgumentException("The context must not be null.");
+        }
         
         if (urlBuilder == null) {
             throw new IllegalArgumentException("The urlBuilder must not be "
                     + "null.");
         }
         
+        this.context = context;
         this.urlBuilder = urlBuilder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public DatabaseVersion getDatabaseVersion(final String schemaType)
             throws DatabaseEndpointException {
-        final HttpFetcher fetcher = new HttpFetcher(urlBuilder
+        final HttpFetcher fetcher = new HttpFetcher(context, urlBuilder
                 .getDbVersionCheckUrl(schemaType).toString(), false);
         
         return getParser().getDatabaseVersion(fetcher);

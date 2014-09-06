@@ -25,6 +25,7 @@
 
 package uk.org.rivernile.android.bustracker.endpoints;
 
+import android.content.Context;
 import uk.org.rivernile.android.bustracker.parser.livetimes.BusParser;
 import uk.org.rivernile.android.bustracker.parser.livetimes.Journey;
 import uk.org.rivernile.android.bustracker.parser.livetimes.LiveBusTimes;
@@ -38,46 +39,47 @@ import uk.org.rivernile.android.fetchers.HttpFetcher;
  */
 public class HttpBusTrackerEndpoint extends BusTrackerEndpoint {
     
+    private final Context context;
     private final UrlBuilder urlBuilder;
     
     /**
      * Create a new endpoint.
      * 
+     * @param context A {@link Context} instance. Must not be {@code null}.
      * @param parser The parser to use to parse the data that comes from the
-     * source. Must not be null.
-     * @param urlBuilder A UrlBuilder instance, used to construct URLs for
-     * contacting remote resources.
+     * source. Must not be {@code null}.
+     * @param urlBuilder A {@link UrlBuilder} instance, used to construct URLs
+     * for contacting remote resources. Must not be {@code null}.
      */
-    public HttpBusTrackerEndpoint(final BusParser parser,
+    public HttpBusTrackerEndpoint(final Context context, final BusParser parser,
             final UrlBuilder urlBuilder) {
         super(parser);
+        
+        if (context == null) {
+            throw new IllegalArgumentException("The context must not be null.");
+        }
         
         if (urlBuilder == null) {
             throw new IllegalArgumentException("urlBuilder must not be null.");
         }
         
+        this.context = context;
         this.urlBuilder = urlBuilder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public LiveBusTimes getBusTimes(final String[] stopCodes,
             final int numDepartures) throws LiveTimesException {
-        final HttpFetcher fetcher = new HttpFetcher(urlBuilder
+        final HttpFetcher fetcher = new HttpFetcher(context, urlBuilder
                 .getBusTimesUrl(stopCodes, numDepartures).toString(), false);
         
         return getParser().getBusTimes(fetcher);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Journey getJourneyTimes(final String stopCode,
             final String journeyId) throws LiveTimesException {
-        final HttpFetcher fetcher = new HttpFetcher(urlBuilder
+        final HttpFetcher fetcher = new HttpFetcher(context, urlBuilder
                 .getJourneyTimesUrl(stopCode, journeyId).toString(), false);
         
         return getParser().getJourneyTimes(fetcher);

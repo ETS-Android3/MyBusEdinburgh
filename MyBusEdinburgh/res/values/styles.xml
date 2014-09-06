@@ -112,8 +112,11 @@
     
     <style name="BusTimesListItemText.Time">
         <item name="android:layout_width">@dimen/bustime_width</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:paddingRight">@dimen/padding_default</item>
-        <item name="android:gravity">right</item>
+        <item name="android:gravity">right|center_vertical</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:focusable">false</item>
+        <item name="android:focusableInTouchMode">false</item>
     </style>
 </resources>
