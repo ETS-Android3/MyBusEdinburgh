@@ -36,7 +36,7 @@
             android:title="@string/preferences_checkbox_general_databaseupdatewifi"
             android:summary="@string/preferences_checkbox_general_databaseupdatewifi_summary"
             android:defaultValue="false" />
-        <uk.org.rivernile.android.utils.GenericDialogPreference
+        <uk.org.rivernile.android.bustracker.ui.settings.ConfirmDialogPreference
             android:key="pref_backup_favourites"
             android:title="@string/preferences_dialog_general_backup"
             android:summary="@string/preferences_dialog_general_backup_summary"
@@ -44,7 +44,7 @@
             android:dialogMessage="@string/preferences_dialog_general_backup_message"
             android:positiveButtonText="@string/yes"
             android:negativeButtonText="@string/no" />
-        <uk.org.rivernile.android.utils.GenericDialogPreference
+        <uk.org.rivernile.android.bustracker.ui.settings.ConfirmDialogPreference
             android:key="pref_restore_favourites"
             android:title="@string/preferences_dialog_general_restore"
             android:summary="@string/preferences_dialog_general_restore_summary"
@@ -110,7 +110,7 @@
             android:key="pref_map_zoom_buttons_state"
             android:title="@string/preferences_checkbox_map_zoom_buttons"
             android:defaultValue="true" />
-        <uk.org.rivernile.android.utils.GenericDialogPreference
+        <uk.org.rivernile.android.bustracker.ui.settings.ConfirmDialogPreference
             android:key="pref_clear_search_history"
             android:title="@string/preferences_dialog_map_clearsearchhistory"
             android:summary="@string/preferences_dialog_map_clearsearchhistory_summary"
